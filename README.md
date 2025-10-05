@@ -4,7 +4,7 @@ A Next.js API for water quality monitoring and analysis using AI-powered insight
 
 ## Features
 
-- **Water Quality Analysis**: AI-powered analysis of pH, temperature, and turbidity measurements
+- **Water Quality Analysis**: AI-powered analysis of pH, TDS (Total Dissolved Solids), and turbidity measurements
 - **Experiment Management**: Create and track water quality experiments
 - **Historical Data Comparison**: Find similar experiments from a historical database
 - **Geographic Context**: Convert coordinates to country names for location-based insights
@@ -34,7 +34,7 @@ A Next.js API for water quality monitoring and analysis using AI-powered insight
 - `description` (Text)
 - `createdAt` (Timestamp)
 - `ph` (Numeric)
-- `temperature` (Numeric)
+- `tds` (Numeric) - Total Dissolved Solids in ppm
 - `turbidity` (Numeric)
 - `summary` (Text) - AI-generated analysis
 - `solution` (Text) - AI-generated recommendations
@@ -47,7 +47,7 @@ A Next.js API for water quality monitoring and analysis using AI-powered insight
 - `longitude` (Numeric)
 - `latitude` (Numeric)
 - `turbidity` (Numeric)
-- `temperature` (Numeric)
+- `tds` (Numeric) - Total Dissolved Solids in ppm
 - `ph` (Numeric)
 
 ## API Endpoints
@@ -126,7 +126,7 @@ Update an experiment with water quality sensor readings and get AI analysis.
 ```json
 {
   "ph": 7.2,
-  "temperature": 24.5,
+  "tds": 150,
   "turbidity": 15.3
 }
 ```
@@ -139,12 +139,12 @@ Update an experiment with water quality sensor readings and get AI analysis.
   "experiment": {
     "id": "experiment-uuid",
     "ph": "7.2",
-    "temperature": "24.5",
+    "tds": "150",
     "turbidity": "15.3",
-    "summary": "The water quality shows good conditions with neutral pH, optimal temperature, and low turbidity indicating clear water.",
+    "summary": "The water quality shows good conditions with neutral pH, low TDS levels indicating minimal dissolved solids, and low turbidity indicating clear water.",
     "solution": ""
   },
-  "similarExperimentAnalysis": "Experiment 5 has the most similar values, with pH 7.2, temperature 24°C, and turbidity 15 NTU closely matching your readings. The similar water quality conditions suggest comparable environmental factors. This experiment was conducted in Brazil."
+  "similarExperimentAnalysis": "Experiment 5 has the most similar values, with pH 7.2, TDS 150 ppm, and turbidity 15 NTU closely matching your readings. The similar water quality conditions suggest comparable environmental factors. This experiment was conducted in Brazil."
 }
 ```
 
@@ -165,7 +165,7 @@ Retrieve a specific experiment by ID.
     "description": "Testing water quality in local lake",
     "createdAt": "2024-01-01T00:00:00.000Z",
     "ph": "7.2",
-    "temperature": "24.5",
+    "tds": "150",
     "turbidity": "15.3",
     "summary": "The water quality shows good conditions...",
     "solution": ""
@@ -195,7 +195,7 @@ Retrieve all experiments for a specific user.
       "description": "Testing water quality in local lake",
       "createdAt": "2024-01-01T00:00:00.000Z",
       "ph": "7.2",
-      "temperature": "24.5",
+      "tds": "150",
       "turbidity": "15.3",
       "summary": "The water quality shows good conditions...",
       "solution": ""
@@ -284,7 +284,7 @@ OPENAI_API_KEY="your-openai-api-key"
      -H "Content-Type: application/json" \
      -d '{
        "ph": 6.8,
-       "temperature": 22.1,
+       "tds": 120,
        "turbidity": 8.5
      }'
    ```

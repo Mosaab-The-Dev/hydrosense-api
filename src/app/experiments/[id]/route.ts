@@ -38,18 +38,13 @@ export async function PATCH(
       );
     }
 
-    const { ph, temperature, turbidity } = body;
+    const { ph, tds, turbidity } = body;
 
     // Validate that at least one sensor value is provided
-    if (
-      ph === undefined &&
-      temperature === undefined &&
-      turbidity === undefined
-    ) {
+    if (ph === undefined && tds === undefined && turbidity === undefined) {
       return NextResponse.json(
         {
-          error:
-            "At least one sensor value (ph, temperature, turbidity) is required",
+          error: "At least one sensor value (ph, tds, turbidity) is required",
         },
         { status: 400 }
       );
@@ -68,15 +63,16 @@ export async function PATCH(
     // Build the update object with only provided values
     const updateData: any = {};
     if (ph !== undefined) updateData.ph = ph.toString();
-    if (temperature !== undefined)
-      updateData.temperature = temperature.toString();
+    if (tds !== undefined) updateData.tds = tds.toString();
     if (turbidity !== undefined) updateData.turbidity = turbidity.toString();
 
     // Call OpenAI to analyze the water quality data
     const prompt = `You are a water quality expert. Analyze the following water quality test results and provide a comprehensive assessment:
 
 pH: ${ph !== undefined ? ph : "Not measured"}
-Temperature: ${temperature !== undefined ? temperature + "°C" : "Not measured"}
+TDS (Total Dissolved Solids): ${
+      tds !== undefined ? tds + " ppm" : "Not measured"
+    }
 Turbidity: ${turbidity !== undefined ? turbidity + " NTU" : "Not measured"}
 
 Please provide:
@@ -145,16 +141,18 @@ Format your response as JSON with two fields: "summary" and "solution". If the w
         // Prepare data for OpenAI to find the most similar experiment
         const similarityPrompt = `You are a water quality data analyst. I have water quality test results from a new experiment:
 pH: ${ph !== undefined ? ph : "Not measured"}
-Temperature: ${temperature !== undefined ? temperature + "°C" : "Not measured"}
+TDS (Total Dissolved Solids): ${
+          tds !== undefined ? tds + " ppm" : "Not measured"
+        }
 Turbidity: ${turbidity !== undefined ? turbidity + " NTU" : "Not measured"}
 
 Here is a list of historical experiments from our database:
 ${bankExperiments
   .map(
     (exp, idx) =>
-      `Experiment ${idx + 1}: pH=${exp.ph || "N/A"}, Temperature=${
-        exp.temperature || "N/A"
-      }°C, Turbidity=${exp.turbidity || "N/A"} NTU, Longitude=${
+      `Experiment ${idx + 1}: pH=${exp.ph || "N/A"}, TDS=${
+        exp.tds || "N/A"
+      } ppm, Turbidity=${exp.turbidity || "N/A"} NTU, Longitude=${
         exp.longitude || "N/A"
       }, Latitude=${exp.latitude || "N/A"}, Date=${exp.date || "N/A"}, Time=${
         exp.time || "N/A"
@@ -162,7 +160,7 @@ ${bankExperiments
   )
   .join("\n")}
 
-Please analyze these historical experiments and identify which one has the most similar pH, temperature, and turbidity values to the new experiment. Write a brief analysis (2-3 sentences) explaining which experiment is most similar, why it's similar, and translate the longitude and latitude coordinates into the country name where that experiment was conducted. Write naturally in plain text, as if explaining to a colleague.`;
+Please analyze these historical experiments and identify which one has the most similar pH, TDS, and turbidity values to the new experiment. Write a brief analysis (2-3 sentences) explaining which experiment is most similar, why it's similar, and translate the longitude and latitude coordinates into the country name where that experiment was conducted. Write naturally in plain text, as if explaining to a colleague.`;
 
         const similarityCompletion = await openai.chat.completions.create({
           model: "gpt-4o-mini",

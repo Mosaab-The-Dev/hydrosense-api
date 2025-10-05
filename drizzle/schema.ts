@@ -1,4 +1,12 @@
-import { pgTable, text, timestamp, numeric, uuid, date, time } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  timestamp,
+  numeric,
+  uuid,
+  date,
+  time,
+} from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey(),
@@ -12,11 +20,10 @@ export const experiments = pgTable("experiments", {
   description: text("description"),
   createdAt: timestamp("created_at").defaultNow(),
   ph: numeric("ph"),
-  temperature: numeric("temperature"),
+  tds: numeric("tds"),
   turbidity: numeric("turbidity"),
   summary: text("summary"),
   solution: text("solution"),
-  similarExperimentAnalysis: text("similar_experiment_analysis"),
 });
 
 export const experimentsBank = pgTable("experiments_bank", {
@@ -26,6 +33,6 @@ export const experimentsBank = pgTable("experiments_bank", {
   longitude: numeric("Longitude"),
   latitude: numeric("Latitude"),
   turbidity: numeric("Turbidity"),
-  temperature: numeric("Temperature"),
+  tds: numeric("TDS"),
   ph: numeric("pH"),
 });
